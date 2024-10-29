@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/navigation_menu.dart';
+import 'package:mobile/data/models/student_login_model.dart';
+import 'package:mobile/features/authentication/controllers/student_login/student_login_controller.dart';
 import 'package:mobile/utils/constants/colors.dart';
 import 'package:mobile/utils/constants/sizes.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,12 @@ import 'package:iconsax/iconsax.dart';
 import 'package:mobile/features/authentication/screens/register/register.dart';
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({
+  final StudentLoginController controller = Get.put(StudentLoginController());
+  final _studentIdController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  LoginForm({
     super.key,
   });
 
@@ -20,6 +26,7 @@ class LoginForm extends StatelessWidget {
         children: [
           /// Student ID
           TextFormField(
+            controller: _studentIdController,
             decoration: const InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -36,6 +43,7 @@ class LoginForm extends StatelessWidget {
 
           /// Email
           TextFormField(
+            controller: _emailController,
             decoration: const InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -52,6 +60,7 @@ class LoginForm extends StatelessWidget {
 
           /// Password
           TextFormField(
+            controller: _passwordController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -81,27 +90,37 @@ class LoginForm extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.buttonPrimary,
-                  foregroundColor: TColors.white,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Colors.black, // Border color
-                      width: 2, // Border thickness
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ), // Square edges for a brutalist look
-                  ),
-                ),
-                onPressed: () => Get.to(() => const NavigationMenu()),
-                child: const Text(
-                  'Sign In',
-                  style: TextStyle(
-                    fontSize: TSizes.fontSizeMd,
-                  ),
-                )),
+            child: Obx(() {
+              return controller.isLoading.value
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TColors.buttonPrimary,
+                        foregroundColor: TColors.white,
+                        shape: const RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.black, // Border color
+                            width: 2, // Border thickness
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ), // Square edges for a brutalist look
+                        ),
+                      ),
+                      onPressed: () {
+                        controller.submitLogin(StudentLogin(
+                            studentId: _studentIdController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text));
+                      },
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: TSizes.fontSizeMd,
+                        ),
+                      ),
+                    );
+            }),
           ),
           const SizedBox(height: TSizes.spaceBtwItems),
 
