@@ -28,24 +28,8 @@ class UpcomingSchedulesList extends StatelessWidget {
           child: Column(
             children: [
               ScheduleCard(
-                date: '25',
-                month: 'SEPT',
-                time: '10:00 A.M',
-                day: 'Friday',
-                mode: 'Face to Face',
-              ),
-              SizedBox(height: 10),
-              ScheduleCard(
-                date: '25',
-                month: 'SEPT',
-                time: '10:00 A.M',
-                day: 'Friday',
-                mode: 'Face to Face',
-              ),
-              SizedBox(height: 10),
-              ScheduleCard(
-                date: '25',
-                month: 'SEPT',
+                date: '14',
+                month: 'NOV',
                 time: '10:00 A.M',
                 day: 'Friday',
                 mode: 'Face to Face',

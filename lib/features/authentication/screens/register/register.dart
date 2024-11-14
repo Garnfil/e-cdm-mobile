@@ -9,11 +9,11 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: TColors.primaryBackground,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             top: TSizes.appBarHeight,
             left: TSizes.defaultSpace,
             bottom: TSizes.defaultSpace,
@@ -22,8 +22,8 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             children: [
               // Header
-              RegisterHeader(),
-              SizedBox(height: 20),
+              const RegisterHeader(),
+              const SizedBox(height: 20),
               // Form
               RegisterForm()
             ],

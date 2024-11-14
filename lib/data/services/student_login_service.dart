@@ -1,21 +1,32 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/student_login_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:get_storage/get_storage.dart';
+import 'package:mobile/data/models/student_login_model.dart';
 
 class StudentLoginService {
-  Future<dynamic> login(StudentLogin studentLogin) async {
-    const String _baseUrl = 'http://192.168.56.1:8000/api';
+  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final GetStorage storage = GetStorage();
 
+  Future<dynamic> login(StudentLogin studentLogin) async {
     final response = await http.post(
       Uri.parse('$_baseUrl/student/login'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: json.encode(studentLogin.toJson()),
     );
 
-    if (response.statusCode != 201 || response.statusCode != 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = json.decode(response.body);
+
+      // Save token and user data to storage
+      storage.write('token', data['token']);
+      storage.write('user', data['user']);
+
+      return data;
+    } else {
       throw Exception('Failed to login');
     }
-
-    return json.decode(response.body);
   }
 }

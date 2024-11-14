@@ -1,268 +1,173 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mobile/common/widgets/appbar/action_notification.dart';
 import 'package:mobile/common/widgets/appbar/appbar.dart';
+import 'package:mobile/data/models/school_work_model.dart';
+import 'package:mobile/features/student/controllers/classes/class_controller.dart';
+import 'package:mobile/features/student/controllers/classes/school_work_controller.dart';
+import 'package:mobile/features/student/screens/classes/widget/class_header.dart';
+import 'package:mobile/features/student/screens/classes/widget/school_work_card.dart';
 import 'package:mobile/features/student/screens/school_works/school_work.dart';
 import 'package:mobile/utils/constants/colors.dart';
 import 'package:mobile/utils/constants/sizes.dart';
+import 'package:mobile/utils/formatters/formatter.dart';
 
-class ClassRoomScreen extends StatelessWidget {
-  const ClassRoomScreen({super.key});
+class ClassRoomScreen extends StatefulWidget {
+  final int classroomId;
+  final ClassController classController = Get.put(ClassController());
+
+  ClassRoomScreen({super.key, required this.classroomId});
+
+  @override
+  _ClassRoomScreenState createState() => _ClassRoomScreenState();
+}
+
+class _ClassRoomScreenState extends State<ClassRoomScreen>
+    with SingleTickerProviderStateMixin {
+  final SchoolWorkController controller = Get.put(SchoolWorkController());
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize TabController and add listener
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_handleTabChange);
+
+    // Initial fetch for the first tab
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchStudentTodosSchoolWorks(widget.classroomId);
+      widget.classController.fetchSingleClass(widget.classroomId);
+    });
+  }
+
+  // Handle tab change to fetch data accordingly
+  void _handleTabChange() {
+    if (!_tabController.indexIsChanging) {
+      switch (_tabController.index) {
+        case 0:
+          controller.fetchStudentTodosSchoolWorks(widget.classroomId);
+          break;
+        case 1:
+          controller.fetchStudentCompletedSchoolWorks(widget.classroomId);
+          break;
+        case 2:
+          controller.fetchStudentMissingSchoolWorks(widget.classroomId);
+          break;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildTabContent(RxList<SchoolWork> schoolWorks) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        // Check if there are no school works
+        if (schoolWorks.isEmpty) {
+          return const Center(child: Text('No school works available.'));
+        }
+
+        return ListView.builder(
+          itemCount: schoolWorks.length,
+          itemBuilder: (context, index) {
+            final schoolWork = schoolWorks[index];
+            return SchoolWorkCard(
+              schoolWorkId: schoolWork.id,
+              title: schoolWork.title,
+              dueDate: schoolWork.dueDatetime.toString(),
+              schoolWorkType: schoolWork.type,
+            );
+          },
+        );
+      }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      initialIndex: 0,
-      child: Scaffold(
-        backgroundColor: TColors.primaryBackground,
-        body: SafeArea(
-          child: Column(
-            children: [
-              /// AppBar
-              TAppBar(
-                title: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Class',
-                        style: TextStyle(
-                          fontSize: TSizes.fontSize2Xl,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ]),
-                showBackArrow: false,
-                actions: [
-                  Stack(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Iconsax
-                            .notification), // Replace with your image asset
-                        onPressed: () {},
-                      ),
-                      Positioned(
-                        right: 0,
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                              color: TColors.black,
-                              borderRadius: BorderRadius.circular(100)),
-                          child: const Center(
-                            child: Text(
-                              '2',
-                              style: TextStyle(color: TColors.white),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
+    return Scaffold(
+      backgroundColor: TColors.primaryBackground,
+      body: SafeArea(
+        child: Column(
+          children: [
+            /// AppBar
+            const TAppBar(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Class',
+                    style: TextStyle(
+                      fontSize: TSizes.fontSize2Xl,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
+              showBackArrow: false,
+            ),
 
-              /// Class Header
-              Padding(
-                padding: const EdgeInsets.all(TSizes.defaultSpace),
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(TSizes.defaultSpace),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xff0B4D10),
-                            Color(0xffFFC900)
-                          ], // Define the colors for the gradient
-                          begin: Alignment
-                              .topLeft, // Starting point of the gradient
-                          end: Alignment
-                              .bottomRight, // Ending point of the gradient
-                        ),
-                        border: Border.all(color: TColors.black, width: 2),
+            /// Class Header
+            Padding(
+              padding: const EdgeInsets.all(TSizes.defaultSpace),
+              child: Obx(
+                () {
+                  final singleClass = widget.classController.singleClass.value;
+
+                  return Column(
+                    children: [
+                      ClassHeader(
+                        classRoom: singleClass,
                       ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'BSIT - 3H',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Text(
-                            'IT ELECT',
-                            style: TextStyle(
-                                fontSize: TSizes.fontSize3Xl,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
+                      const SizedBox(height: TSizes.spaceBtwItems),
+
+                      /// Tab Bar
+                      TabBar(
+                        controller: _tabController,
+                        indicatorColor: TColors.primaryColor,
+                        isScrollable: true,
+                        unselectedLabelColor: Colors.grey,
+                        tabs: const [
+                          Tab(child: Text("To Do's")),
+                          Tab(child: Text('Completed')),
+                          Tab(child: Text('Missing')),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: TSizes.spaceBtwItems),
-
-                    /// Tab Bar
-                    const TabBar(
-                      indicatorColor: TColors.primaryColor,
-                      isScrollable: true,
-                      unselectedLabelColor: Colors.grey,
-                      tabAlignment: TabAlignment.start,
-                      tabs: [
-                        Tab(child: Text("To Do's")),
-                        Tab(child: Text('Completed')),
-                        Tab(child: Text('Missing')),
-                      ],
-                    ),
-                    const SizedBox(height: TSizes.spaceBtwItems),
-                  ],
-                ),
+                      const SizedBox(height: TSizes.spaceBtwItems),
+                    ],
+                  );
+                },
               ),
+            ),
 
-              /// Tab Bar View (wrapped in an Expanded to give it height)
-              /// Tab Bar View (wrapped in an Expanded to give it height)
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    /// Content for 'To Do' tab
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, // Assuming a default padding
-                      ),
-                      child: ListView(
-                        children: const [
-                          SchoolWorkCard(
-                            title: 'Assignment #1',
-                            points: '10',
-                            dueDate: 'Oct 11, 2024',
-                            schoolWorkType: 'assignment',
-                          ),
-                          SizedBox(height: 5),
-                          SchoolWorkCard(
-                            title: 'Quiz #1',
-                            points: '30',
-                            dueDate: 'Oct 11, 2024',
-                            schoolWorkType: 'quiz',
-                          ),
-                          SizedBox(height: 5),
-                          SchoolWorkCard(
-                            title: 'Activity #1',
-                            points: '30',
-                            dueDate: 'Oct 11, 2024',
-                            schoolWorkType: 'activity',
-                          ),
-                        ],
-                      ),
-                    ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  /// 'To Do' tab content
+                  _buildTabContent(controller.schoolWorks),
 
-                    /// Content for 'Completed' tab
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: TSizes.defaultSpace,
-                      ),
-                      child: const Text('To Do'),
-                    ),
+                  /// 'Completed' tab content
+                  _buildTabContent(controller.schoolWorks),
 
-                    /// Content for 'Missing' tab
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: TSizes.defaultSpace,
-                      ),
-                      child: const Text('To Do'),
-                    ),
-                  ],
-                ),
+                  /// 'Missing' tab content
+                  _buildTabContent(controller.schoolWorks),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SchoolWorkCard extends StatelessWidget {
-  final String title;
-  final String points;
-  final String dueDate;
-  final String schoolWorkType;
-
-  const SchoolWorkCard({
-    super.key,
-    required this.title,
-    required this.points,
-    required this.dueDate,
-    required this.schoolWorkType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Get.to(() => const SchoolWorkScreen()),
-      child: Card(
-        margin: const EdgeInsets.all(10),
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Colors.black, width: 1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(TSizes.defaultSpace),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              /// School Work Details (Left Side)
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Points: $points',
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Due Date: $dueDate',
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              /// School Work Type Badge (Right Side)
-              Chip(
-                label: Text(
-                  schoolWorkType.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 10.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                backgroundColor: const Color(0xffFFC900),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  side: const BorderSide(color: Colors.black, width: 1),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

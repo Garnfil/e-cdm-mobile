@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobile/features/authentication/screens/onboarding/onboarding.dart';
+import 'package:mobile/features/authentication/screens/login/login.dart';
+import 'package:mobile/navigation_menu.dart';
 import 'package:mobile/utils/constants/colors.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  final bool hasSession;
+
+  const App({super.key, required this.hasSession});
 
   // This widget is the root of your application.
   @override
@@ -15,7 +18,7 @@ class App extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: TColors.primaryColor),
         useMaterial3: true,
       ),
-      home: const OnBoardingScreen(),
+      home: hasSession ? const NavigationMenu() : const LoginScreen(),
     );
   }
 }

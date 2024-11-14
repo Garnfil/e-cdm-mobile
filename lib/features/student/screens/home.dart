@@ -12,13 +12,13 @@ class StudentHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: TColors.primaryBackground,
       body: SingleChildScrollView(
         child: Column(
           children: [
             TAppBar(
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('${TText.homeAppbarTitle},',
@@ -27,38 +27,11 @@ class StudentHomeScreen extends StatelessWidget {
                 ],
               ),
               showBackArrow: false,
-              actions: [
-                Stack(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Iconsax
-                          .notification), // Replace with your image asset
-                      onPressed: () {},
-                    ),
-                    Positioned(
-                      right: 0,
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                            color: TColors.black,
-                            borderRadius: BorderRadius.circular(100)),
-                        child: const Center(
-                          child: Text(
-                            '2',
-                            style: TextStyle(color: TColors.white),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ],
             ),
-            const SizedBox(height: TSizes.sm),
+            SizedBox(height: TSizes.sm),
 
             /// Body Content
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(TSizes.defaultSpace),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

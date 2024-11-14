@@ -1,19 +1,19 @@
 class StudentLogin {
-  String studentId;
+  String student_id;
   String email;
   String password;
 
   StudentLogin(
-      {required this.studentId, required this.email, required this.password});
+      {required this.student_id, required this.email, required this.password});
 
   factory StudentLogin.fromJson(Map<String, dynamic> json) => StudentLogin(
-        studentId: json['studentId'],
+        student_id: json['student_id'],
         email: json['email'],
         password: json['password'],
       );
 
   Map<String, dynamic> toJson() => {
-        "studentId": studentId,
+        "student_id": student_id,
         "email": email,
         "password": password,
       };

@@ -1,8 +1,9 @@
 import 'package:intl/intl.dart';
 
 class TFormatter {
-  static String formatDate(DateTime? date) {
+  static String formatDate(DateTime? date, String? format) {
     date ??= DateTime.now();
-    return DateFormat('dd-MMM-yyyy').format(date);
+    format ??= "dd-MMM-yyyy";
+    return DateFormat(format).format(date);
   }
 }

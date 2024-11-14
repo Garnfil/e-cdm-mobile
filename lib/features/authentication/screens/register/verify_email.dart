@@ -66,9 +66,9 @@ class VerifyEmailScreen extends StatelessWidget {
                         ), // Square edges for a brutalist look
                       ),
                     ),
-                    onPressed: () => Get.to(const VerifyEmailScreen()),
+                    onPressed: () => Get.to(const LoginScreen()),
                     child: const Text(
-                      'Continue',
+                      'Login Now',
                       style: TextStyle(
                         fontSize: TSizes.fontSizeMd,
                       ),

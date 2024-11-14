@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mobile/features/student/screens/class_schedules/class_schedules.dart';
 import 'package:mobile/features/student/screens/classes/classes.dart';
 import 'package:mobile/features/student/screens/home.dart';
+import 'package:mobile/features/student/screens/profile/profile.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -39,8 +41,8 @@ class NavigationController extends GetxController {
 
   final screens = [
     const StudentHomeScreen(),
-    const ClassesScreen(),
-    Container(color: Colors.deepOrange),
-    Container(color: Colors.blue)
+    ClassesScreen(),
+    const CalendarPage(),
+    const EditProfilePage(),
   ];
 }

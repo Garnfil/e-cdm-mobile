@@ -3,12 +3,16 @@ import 'package:get/get.dart';
 // import 'package:iconsax/iconsax.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mobile/common/widgets/appbar/appbar.dart';
+import 'package:mobile/features/student/controllers/classes/class_controller.dart';
 import 'package:mobile/features/student/screens/classes/classroom.dart';
 import 'package:mobile/utils/constants/colors.dart';
 import 'package:mobile/utils/constants/sizes.dart';
 
 class ClassesScreen extends StatelessWidget {
-  const ClassesScreen({super.key});
+  final ClassController controller = Get.put(ClassController());
+  final _classCodeController = TextEditingController();
+
+  ClassesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +23,8 @@ class ClassesScreen extends StatelessWidget {
           child: Column(
             children: [
               /// App Bar
-              TAppBar(
-                title: const Column(
+              const TAppBar(
+                title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -32,33 +36,6 @@ class ClassesScreen extends StatelessWidget {
                       ),
                     ]),
                 showBackArrow: false,
-                actions: [
-                  Stack(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Iconsax
-                            .notification), // Replace with your image asset
-                        onPressed: () {},
-                      ),
-                      Positioned(
-                        right: 0,
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                              color: TColors.black,
-                              borderRadius: BorderRadius.circular(100)),
-                          child: const Center(
-                            child: Text(
-                              '2',
-                              style: TextStyle(color: TColors.white),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
               ),
 
               /// Content Body
@@ -82,7 +59,63 @@ class ClassesScreen extends StatelessWidget {
                             Icons.add_circle,
                             color: TColors.buttonPrimary,
                           ),
-                          onPressed: () {},
+                          onPressed: () => showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => Dialog(
+                                child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Text(
+                                    'Join Class',
+                                    style:
+                                        TextStyle(fontSize: TSizes.fontSizeXl),
+                                  ),
+                                  TextField(
+                                      controller: _classCodeController,
+                                      decoration: const InputDecoration(
+                                          hintText: "Enter class code")),
+                                  const SizedBox(height: 15),
+                                  Row(
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Close'),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              TColors.buttonPrimary,
+                                          foregroundColor: TColors.white,
+                                          shape: const RoundedRectangleBorder(
+                                            side: BorderSide(
+                                              color:
+                                                  Colors.black, // Border color
+                                              width: 2, // Border thickness
+                                            ),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ), // Square edges for a brutalist look
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          controller.joinClass(
+                                              _classCodeController.text);
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Join Class'),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )),
+                          ),
                         ),
                       ],
                     ),
@@ -94,29 +127,20 @@ class ClassesScreen extends StatelessWidget {
                     /// Wrapping ListView in a SizedBox with a defined height
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.7,
-                      child: ListView(
-                        children: const [
-                          CourseCard(
-                            courseName: 'IT-ELECT',
-                            instructorName: 'Mr. Joe F. Maciling',
-                          ),
-                          SizedBox(height: 10),
-                          CourseCard(
-                            courseName: 'QM',
-                            instructorName: 'Mr. Joe F. Maciling',
-                          ),
-                          SizedBox(height: 10),
-                          CourseCard(
-                            courseName: 'CAPSTONE 1',
-                            instructorName: 'Mr. Joe F. Maciling',
-                          ),
-                          SizedBox(height: 10),
-                          CourseCard(
-                            courseName: 'SA',
-                            instructorName: 'Ms. Sheena F. George',
-                          ),
-                        ],
-                      ),
+                      child: Obx(() => ListView.separated(
+                            itemCount: controller.classes.length,
+                            itemBuilder: (context, index) {
+                              final classRoom = controller.classes[index];
+                              return CourseCard(
+                                  classroomId: classRoom.id,
+                                  courseName: classRoom.title,
+                                  instructorName:
+                                      classRoom.instructorId.toString());
+                            },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                                    height: 10), // Space between items
+                          )),
                     ),
                   ],
                 ),
@@ -130,6 +154,7 @@ class ClassesScreen extends StatelessWidget {
 }
 
 class CourseCard extends StatelessWidget {
+  final int classroomId;
   final String courseName;
   final String instructorName;
 
@@ -137,19 +162,22 @@ class CourseCard extends StatelessWidget {
     super.key,
     required this.courseName,
     required this.instructorName,
+    required this.classroomId,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.to(() => const ClassRoomScreen()),
+      onTap: () => Get.to(() => ClassRoomScreen(
+            classroomId: classroomId,
+          )),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
           side: const BorderSide(color: Colors.black, width: 2),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(18.0),
           child: Row(
             children: [
               Expanded(
@@ -159,21 +187,16 @@ class CourseCard extends StatelessWidget {
                     Text(
                       courseName,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      instructorName,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                      ),
-                    ),
                   ],
                 ),
+              ),
+              const SizedBox(
+                width: 20,
               ),
               const CircleAvatar(
                 radius: 20,

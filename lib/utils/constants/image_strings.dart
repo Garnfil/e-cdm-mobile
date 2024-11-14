@@ -10,4 +10,7 @@ class TImages {
   // Verify Email Images
   static const String verifyEmailImage =
       "assets/images/verify_email_images/verify_email.png";
+
+  static const String handCursorImage =
+      "assets/images/attendance_images/hand_cursor.png";
 }

@@ -1,4 +1,4 @@
-class Studnt {
+class Student {
   final int id;
   final String studentId;
   final String email;
@@ -19,7 +19,7 @@ class Studnt {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Studnt({
+  Student({
     required this.id,
     required this.studentId,
     required this.email,
@@ -41,8 +41,8 @@ class Studnt {
     required this.updatedAt,
   });
 
-  factory Studnt.fromJson(Map<String, dynamic> json) {
-    return Studnt(
+  factory Student.fromJson(Map<String, dynamic> json) {
+    return Student(
       id: json['id'],
       studentId: json['student_id'],
       email: json['email'],

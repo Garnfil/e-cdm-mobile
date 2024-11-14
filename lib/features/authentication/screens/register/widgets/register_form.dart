@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mobile/data/models/student_register_model.dart';
+import 'package:mobile/features/authentication/controllers/student_register/student_register_controller.dart';
 import 'package:mobile/features/authentication/screens/login/login.dart';
-import 'package:mobile/features/authentication/screens/register/verify_email.dart';
 import 'package:mobile/utils/constants/colors.dart';
 import 'package:mobile/utils/constants/sizes.dart';
 
 class RegisterForm extends StatelessWidget {
-  const RegisterForm({
+  final StudentRegisterController studentRegisterController =
+      StudentRegisterController();
+  final studentIdController = TextEditingController();
+  final firstnameController = TextEditingController();
+  final lastnameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  RegisterForm({
     super.key,
   });
 
@@ -20,6 +29,7 @@ class RegisterForm extends StatelessWidget {
         children: [
           /// Student ID
           TextFormField(
+            controller: studentIdController,
             decoration: const InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -39,6 +49,7 @@ class RegisterForm extends StatelessWidget {
             children: [
               Expanded(
                 child: TextFormField(
+                  controller: firstnameController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -53,6 +64,7 @@ class RegisterForm extends StatelessWidget {
               const SizedBox(width: 20),
               Expanded(
                 child: TextFormField(
+                  controller: lastnameController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -71,6 +83,7 @@ class RegisterForm extends StatelessWidget {
 
           /// Email
           TextFormField(
+            controller: emailController,
             decoration: const InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -85,6 +98,8 @@ class RegisterForm extends StatelessWidget {
 
           /// Password
           TextFormField(
+            controller: passwordController,
+            obscureText: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -117,7 +132,16 @@ class RegisterForm extends StatelessWidget {
                     ), // Square edges for a brutalist look
                   ),
                 ),
-                onPressed: () => Get.to(const VerifyEmailScreen()),
+                onPressed: () => {
+                      studentRegisterController.submitRegistration(
+                        StudentRegister(
+                            student_id: studentIdController.text,
+                            email: emailController.text,
+                            password: passwordController.text,
+                            firstname: firstnameController.text,
+                            lastname: lastnameController.text),
+                      )
+                    },
                 child: const Text(
                   'Sign Up',
                   style: TextStyle(

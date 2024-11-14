@@ -61,6 +61,7 @@ class LoginForm extends StatelessWidget {
           /// Password
           TextFormField(
             controller: _passwordController,
+            obscureText: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -108,8 +109,9 @@ class LoginForm extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
+                        // Get.to(const NavigationMenu());
                         controller.submitLogin(StudentLogin(
-                            studentId: _studentIdController.text,
+                            student_id: _studentIdController.text,
                             email: _emailController.text,
                             password: _passwordController.text));
                       },
