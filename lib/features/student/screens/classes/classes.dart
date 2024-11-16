@@ -49,13 +49,6 @@ class ClassesScreen extends StatelessWidget {
                       children: [
                         IconButton(
                           icon: const Icon(
-                            Icons.mail,
-                            color: TColors.buttonPrimary,
-                          ),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: const Icon(
                             Icons.add_circle,
                             color: TColors.buttonPrimary,
                           ),
