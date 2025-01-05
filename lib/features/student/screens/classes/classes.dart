@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:iconsax/iconsax.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:mobile/common/widgets/appbar/appbar.dart';
 import 'package:mobile/features/student/controllers/classes/class_controller.dart';
+import 'package:mobile/features/student/screens/classes/available_classes.dart';
 import 'package:mobile/features/student/screens/classes/classroom.dart';
 import 'package:mobile/utils/constants/colors.dart';
 import 'package:mobile/utils/constants/sizes.dart';
@@ -48,66 +48,113 @@ class ClassesScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
+                          onPressed: () {
+                            Get.to(AvailableClassesScreen());
+                          },
+                          icon: const Icon(
+                            Icons.list,
+                            color: TColors.buttonPrimary,
+                          ),
+                        ),
+                        IconButton(
                           icon: const Icon(
                             Icons.add_circle,
                             color: TColors.buttonPrimary,
                           ),
                           onPressed: () => showDialog<String>(
                             context: context,
-                            builder: (BuildContext context) => Dialog(
-                                child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  const Text(
-                                    'Join Class',
-                                    style:
-                                        TextStyle(fontSize: TSizes.fontSizeXl),
+                            builder: (BuildContext context) => AlertDialog(
+                              backgroundColor: Colors.transparent,
+                              content: Container(
+                                width: 300,
+                                decoration: BoxDecoration(
+                                  color: TColors.white,
+                                  border: Border.all(
+                                    color: Colors.black, // Border color
+                                    width: 2, // Border width
                                   ),
-                                  TextField(
-                                      controller: _classCodeController,
-                                      decoration: const InputDecoration(
-                                          hintText: "Enter class code")),
-                                  const SizedBox(height: 15),
-                                  Row(
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Close'),
-                                      ),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              TColors.buttonPrimary,
-                                          foregroundColor: TColors.white,
-                                          shape: const RoundedRectangleBorder(
-                                            side: BorderSide(
-                                              color:
-                                                  Colors.black, // Border color
-                                              width: 2, // Border thickness
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(10),
-                                            ), // Square edges for a brutalist look
-                                          ),
+                                  borderRadius: BorderRadius
+                                      .zero, // Remove border radius for square corners
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 25, vertical: 20),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      const Text(
+                                        'Join Class',
+                                        style: TextStyle(
+                                          fontSize: TSizes.fontSizeLg,
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                        onPressed: () {
-                                          controller.joinClass(
-                                              _classCodeController.text);
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Join Class'),
+                                      ),
+                                      TextField(
+                                        controller: _classCodeController,
+                                        decoration: const InputDecoration(
+                                          hintText: "Enter class code",
+                                        ),
+                                      ),
+                                      const SizedBox(height: 15),
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: TColors.white,
+                                              foregroundColor:
+                                                  TColors.primaryColor,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                  color: Colors
+                                                      .black, // Border color
+                                                  width: 2, // Border thickness
+                                                ),
+                                                borderRadius: BorderRadius
+                                                    .zero, // Remove rounded edges
+                                              ),
+                                            ),
+                                            child: const Text('Close'),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  TColors.buttonPrimary,
+                                              foregroundColor: TColors.white,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                  color: Colors
+                                                      .black, // Border color
+                                                  width: 2, // Border thickness
+                                                ),
+                                                borderRadius: BorderRadius
+                                                    .zero, // Remove rounded edges
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              controller.joinClass(
+                                                  _classCodeController.text);
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Join Class'),
+                                          ),
+                                        ],
                                       ),
                                     ],
-                                  )
-                                ],
+                                  ),
+                                ),
                               ),
-                            )),
+                            ),
                           ),
                         ),
                       ],
@@ -120,20 +167,33 @@ class ClassesScreen extends StatelessWidget {
                     /// Wrapping ListView in a SizedBox with a defined height
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.7,
-                      child: Obx(() => ListView.separated(
+                      child: Obx(() {
+                        if (controller.classes.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              "No classes available",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey),
+                            ),
+                          );
+                        } else {
+                          return ListView.separated(
                             itemCount: controller.classes.length,
                             itemBuilder: (context, index) {
                               final classRoom = controller.classes[index];
                               return CourseCard(
-                                  classroomId: classRoom.id,
-                                  courseName: classRoom.title,
-                                  instructorName:
-                                      classRoom.instructorId.toString());
+                                classroomId: classRoom.id,
+                                courseName: classRoom.title,
+                                instructorName:
+                                    classRoom.instructorId.toString(),
+                              );
                             },
                             separatorBuilder: (context, index) =>
                                 const SizedBox(
                                     height: 10), // Space between items
-                          )),
+                          );
+                        }
+                      }),
                     ),
                   ],
                 ),

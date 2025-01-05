@@ -109,11 +109,12 @@ class LoginForm extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // Get.to(const NavigationMenu());
                         controller.submitLogin(StudentLogin(
                             student_id: _studentIdController.text,
                             email: _emailController.text,
                             password: _passwordController.text));
+
+                        // Get.to(const StudentInfoRegistration());
                       },
                       child: const Text(
                         'Sign In',

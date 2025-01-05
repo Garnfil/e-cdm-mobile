@@ -14,6 +14,15 @@ class SessionController extends GetxController {
     user.value = newUser;
   }
 
+  // Method to update user and save changes to storage
+  void updateUser(String key, dynamic value) {
+    user[key] = value; // Update the RxMap
+    user.refresh(); // Trigger reactive updates
+
+    // Save the updated user data to storage
+    sessionService.saveSession(token.value, user);
+  }
+
   // Method to clear session data
   void clearSession() {
     token.value = '';

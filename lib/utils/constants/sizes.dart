@@ -26,7 +26,7 @@ class TSizes {
   static const double buttonWidth = 120.0;
 
   // AppBar height
-  static const double appBarHeight = 56.0;
+  static const double appBarHeight = 70.0;
 
   // Images sizes
   static const double imgThumbSize = 80.0;

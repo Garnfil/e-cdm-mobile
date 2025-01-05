@@ -26,7 +26,8 @@ class StudentLoginService {
 
       return data;
     } else {
-      throw Exception('Failed to login');
+      final responseData = json.decode(response.body);
+      throw Exception("${responseData['message'] ?? "Failed to Login!"}");
     }
   }
 }

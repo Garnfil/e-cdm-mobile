@@ -111,7 +111,7 @@ class _myCalendarPageState extends State<CalendarPage> {
             height: size.height - 160,
             width: size.width,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TColors.primaryBackground,
               borderRadius: BorderRadius.circular(30),
             ),
             child: Column(

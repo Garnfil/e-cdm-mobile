@@ -4,7 +4,7 @@ class SessionService {
   final GetStorage storage = GetStorage();
 
   // Save session data
-  void saveSession(String token, Map<String, dynamic> user) {
+  void saveSession(String token, user) {
     storage.write('token', token);
     storage.write('user', user);
   }
