@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class SubmissionAttachmentService {
-  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final String _baseUrl = 'https://my-cdm.godesqsites.com/api';
   final SessionController sessionController = Get.put(SessionController());
   final GetStorage storage = GetStorage();
 

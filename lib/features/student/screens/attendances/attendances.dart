@@ -52,7 +52,7 @@ class _ClassAttedanceScreenState extends State<ClassAttedanceScreen> {
     final token = sessionController.token.value;
 
     final url = Uri.parse(
-        'https://e-learn.godesqsites.com/api/attendances/classes/${widget.classId}/today');
+        'https://my-cdm.godesqsites.com/api/attendances/classes/${widget.classId}/today');
     try {
       final response = await http.get(
         url,

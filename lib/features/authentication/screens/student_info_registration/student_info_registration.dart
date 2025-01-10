@@ -67,7 +67,7 @@ class _StudentInfoRegistrationState extends State<StudentInfoRegistration> {
     try {
       print("Token: ${sessionController.token.value}");
       final response = await http.post(
-        Uri.parse('https://e-learn.godesqsites.com/api/student/info-register'),
+        Uri.parse('https://my-cdm.godesqsites.com/api/student/info-register'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -121,7 +121,7 @@ class _StudentInfoRegistrationState extends State<StudentInfoRegistration> {
   Future<void> fetchSections() async {
     final response = await http.get(
       Uri.parse(
-          'https://e-learn.godesqsites.com/api/sections?year_level=${_formData['year_level']}&course_id=${sessionController.user['course_id'] ?? 1}'),
+          'https://my-cdm.godesqsites.com/api/sections?year_level=${_formData['year_level']}&course_id=${sessionController.user['course_id'] ?? 1}'),
       headers: {
         'Accept': 'application/json',
       },

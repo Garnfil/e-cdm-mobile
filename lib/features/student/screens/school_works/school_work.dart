@@ -156,7 +156,7 @@ class _SchoolWorkDetailScreenState extends State<SchoolWorkDetailScreen> {
                                 icon: const Icon(Icons.arrow_right),
                                 onPressed: () {
                                   String url =
-                                      "https://e-learn.godesqsites.com/assets/uploads/school_work_attachments/${attachment.attachmentName}";
+                                      "https://my-cdm.godesqsites.com/assets/uploads/school_work_attachments/${attachment.attachmentName}";
                                   print("URL: $url");
                                   Get.to(WebViewScreen(url: url));
                                 },

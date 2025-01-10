@@ -4,7 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:mobile/data/models/student_login_model.dart';
 
 class StudentLoginService {
-  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final String _baseUrl = 'https://my-cdm.godesqsites.com/api';
   final GetStorage storage = GetStorage();
 
   Future<dynamic> login(StudentLogin studentLogin) async {

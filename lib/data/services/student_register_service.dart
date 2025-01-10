@@ -4,7 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:mobile/data/models/student_register_model.dart';
 
 class StudentRegisterService {
-  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final String _baseUrl = 'https://my-cdm.godesqsites.com/api';
   final GetStorage storage = GetStorage();
 
   Future<dynamic> register(StudentRegister studentRegister) async {

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AttendanceService {
-  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final String _baseUrl = 'https://my-cdm.godesqsites.com/api';
   final SessionController sessionController = Get.put(SessionController());
   final GetStorage storage = GetStorage();
 

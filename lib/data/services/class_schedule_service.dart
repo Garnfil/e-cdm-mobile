@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:mobile/data/models/class_schedule.dart';
 
 class ClassScheduleService {
-  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final String _baseUrl = 'https://my-cdm.godesqsites.com/api';
   final SessionController sessionController = Get.put(SessionController());
   final GetStorage storage = GetStorage();
 

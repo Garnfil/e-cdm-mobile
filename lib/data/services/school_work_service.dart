@@ -7,7 +7,7 @@ import 'package:mobile/data/controllers/session_controller.dart';
 import 'package:mobile/data/models/school_work_model.dart';
 
 class SchoolWorkService {
-  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final String _baseUrl = 'https://my-cdm.godesqsites.com/api';
   final SessionController sessionController = Get.put(SessionController());
   final GetStorage storage = GetStorage();
 
@@ -137,6 +137,8 @@ class SchoolWorkService {
         throw Exception('Failed to load school works');
       }
     } catch (e) {
+      print('School Work Error:');
+      print(e);
       Get.snackbar("Error", "Failed to load school works");
       return []; // Return an empty list in case of an error
     }

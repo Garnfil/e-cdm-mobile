@@ -1,6 +1,5 @@
 class SchoolWork {
   final int id;
-  final int classId;
   final int instructorId;
   final String title;
   final String description;
@@ -16,7 +15,6 @@ class SchoolWork {
 
   SchoolWork({
     required this.id,
-    required this.classId,
     required this.instructorId,
     required this.title,
     required this.description,
@@ -34,7 +32,6 @@ class SchoolWork {
   factory SchoolWork.fromJson(Map<String, dynamic> json) {
     return SchoolWork(
       id: json['id'],
-      classId: json['class_id'],
       instructorId: json['instructor_id'],
       title: json['title'],
       description: json['description'],
@@ -60,7 +57,6 @@ class SchoolWork {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'class_id': classId,
       'instructor_id': instructorId,
       'title': title,
       'description': description,

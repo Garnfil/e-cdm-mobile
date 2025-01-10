@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'dart:convert';
+
+import 'package:mobile/data/controllers/session_controller.dart';
 import 'package:mobile/features/student/screens/profile/settings.dart';
 import 'package:mobile/utils/constants/colors.dart';
 
@@ -11,7 +15,98 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  bool showPassword = false;
+  late TextEditingController _emailController;
+  late TextEditingController _firstnameController;
+  late TextEditingController _lastnameController;
+  late TextEditingController _yearLevelController;
+  late TextEditingController _sectionController;
+  late TextEditingController _birthdateController;
+  late TextEditingController _ageController;
+
+  final _formKey = GlobalKey<FormState>();
+
+  bool isLoading = true;
+  Map<String, dynamic> userProfile = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _firstnameController = TextEditingController();
+    _lastnameController = TextEditingController();
+    _yearLevelController = TextEditingController();
+    _sectionController = TextEditingController();
+    _birthdateController = TextEditingController();
+    _ageController = TextEditingController();
+
+    // Fetch the user data when the screen is loaded
+    fetchUserProfile();
+  }
+
+  // Fetch user profile data from the API
+  Future<void> fetchUserProfile() async {
+    final sessionController = Get.put(SessionController());
+    final id = sessionController.user['id'];
+    final response = await http.get(
+      Uri.parse('https://my-cdm.godesqsites.com/api/student/profile/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': "Bearer ${sessionController.token.value}",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        userProfile =
+            Map<String, dynamic>.from(json.decode(response.body)['user']);
+        _emailController.text = userProfile['email'] ?? '';
+        _firstnameController.text = userProfile['firstname'] ?? '';
+        _lastnameController.text = userProfile['lastname'] ?? '';
+        _yearLevelController.text = userProfile['year_level'] ?? '';
+        _sectionController.text = userProfile['section'] ?? '';
+        _birthdateController.text = userProfile['birthdate'] ?? '';
+        _ageController.text = userProfile['age'].toString();
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      print('Failed to fetch data');
+    }
+  }
+
+  // Save updated profile data
+  Future<void> saveProfile() async {
+    final sessionController = Get.put(SessionController());
+    final id = sessionController.user['id'];
+
+    final response = await http.put(
+      Uri.parse('https://my-cdm.godesqsites.com/api/student/profile/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': "Bearer ${sessionController.token.value}",
+      },
+      body: json.encode({
+        'firstname': _firstnameController.text,
+        'lastname': _lastnameController.text,
+        'email': _emailController.text,
+        'year_level': _yearLevelController.text,
+        'section': _sectionController.text,
+        'age': _ageController.text,
+        'birthdate': _birthdateController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Profile updated successfully');
+    } else {
+      print('Failed to update profile');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         elevation: 1,
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.settings,
               color: Colors.green,
             ),
@@ -30,176 +125,126 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.only(left: 16, top: 25, right: 16),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: ListView(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
             children: [
-              const Text(
-                "Edit Profile",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
-                                offset: const Offset(0, 10))
-                          ],
-                          shape: BoxShape.circle,
-                          image: const DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                "https://images.pexels.com/photos/3307758/pexels-photo-3307758.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250",
-                              ))),
+              Container(
+                width: 350,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      offset: Offset(5, 5),
+                      blurRadius: 10,
                     ),
-                    Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                            color: TColors.primaryColor,
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                          ),
-                        )),
                   ],
                 ),
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Aligns children with space between
-                children: [
-                  Expanded(
-                    child: buildTextField("First Name", "", false),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      Center(
+                        child: Text(
+                          "EDIT PROFILE",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: TColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+
+                      // Name Field
+                      _buildTextField(
+                        "First Name",
+                        _firstnameController,
+                        "Enter your first name",
+                      ),
+                      SizedBox(height: 15),
+
+                      // Last Name Field
+                      _buildTextField(
+                        "Last Name",
+                        _lastnameController,
+                        "Enter your last name",
+                      ),
+                      SizedBox(height: 15),
+
+                      // Email Field
+                      _buildTextField(
+                        "Email",
+                        _emailController,
+                        "Enter your email",
+                      ),
+                      SizedBox(height: 15),
+
+                      // Address Field
+                      _buildTextField(
+                        "Year Level",
+                        _yearLevelController,
+                        "Enter your address",
+                      ),
+                      SizedBox(height: 15),
+
+                      // Age Field
+                      _buildTextField(
+                        "Section",
+                        _sectionController,
+                        "Enter your age",
+                        keyboardType: TextInputType.number,
+                      ),
+                      SizedBox(height: 15),
+
+                      // Gender Field
+                      _buildTextField(
+                        "Age",
+                        _ageController,
+                        "Enter your gender",
+                      ),
+                      SizedBox(height: 15),
+
+                      // Birthdate Field
+                      _buildTextField(
+                        "Birthdate",
+                        _birthdateController,
+                        "YYYY-MM-DD",
+                      ),
+                      SizedBox(height: 25),
+
+                      // Save Button
+                      Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: TColors.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                              horizontal: 50,
+                            ),
+                          ),
+                          onPressed: saveProfile,
+                          child: Text(
+                            "SAVE",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                      width: 5), // Adds space between the text fields
-                  Expanded(
-                    child: buildTextField("Last Name", "", false),
-                  ),
-                  const SizedBox(
-                      width: 5), // Adds space between the text fields
-                  Expanded(
-                    child: buildTextField("Middle Name", "", false),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Aligns children with space between
-                children: [
-                  Expanded(
-                    child: buildTextField("Email Name", "", false),
-                  ),
-                  const SizedBox(
-                      width: 5), // Adds space between the text fields
-                  Expanded(
-                    child: buildTextField("Student ID", "", false),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Aligns children with space between
-                children: [
-                  Expanded(
-                    child: buildTextField("Year Level", "", false),
-                  ),
-                  const SizedBox(
-                      width: 5), // Adds space between the text fields
-                  Expanded(
-                    child: buildTextField("Section", "", false),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Aligns children with space between
-                children: [
-                  Expanded(
-                    child: buildTextField("Institute", "", false),
-                  ),
-                  const SizedBox(
-                      width: 5), // Adds space between the text fields
-                  Expanded(
-                    child: buildTextField("Course", "", false),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Aligns children with space between
-                children: [
-                  Expanded(
-                    child: buildTextField("Birthdate", "", false),
-                  ),
-                  const SizedBox(
-                      width: 5), // Adds space between the text fields
-                  Expanded(
-                    child: buildTextField("Gender", "", false),
-                  ),
-                ],
-              ),
-              buildTextField("Birthdate", "", false),
-              buildTextField("Gender", "", false),
-              buildTextField("Current Address", "", false),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {},
-                    child: const Text("CANCEL",
-                        style: TextStyle(
-                            fontSize: 14,
-                            letterSpacing: 2.2,
-                            color: Colors.black)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "SAVE",
-                      style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.white),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 25,
+                ),
               ),
             ],
           ),
@@ -208,36 +253,71 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget buildTextField(
-      String labelText, String placeholder, bool isPasswordTextField) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 35.0),
-      child: TextField(
-        obscureText: isPasswordTextField ? showPassword : false,
-        decoration: InputDecoration(
-            suffixIcon: isPasswordTextField
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        showPassword = !showPassword;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.remove_red_eye,
-                      color: Colors.grey,
-                    ),
-                  )
-                : null,
-            contentPadding: EdgeInsets.only(bottom: 3),
-            labelText: labelText,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: placeholder,
-            hintStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            )),
-      ),
+  // Reusable TextField Widget
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller,
+    String hintText, {
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: TColors.primaryColor,
+          ),
+        ),
+        SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "$label cannot be empty";
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            hintText: hintText,
+            filled: true,
+            fillColor: Colors.grey[100],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.black,
+                width: 1.5,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: TColors.primaryColor,
+                width: 1.5,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _firstnameController.dispose();
+    _lastnameController.dispose();
+    _yearLevelController.dispose();
+    _sectionController.dispose();
+    _birthdateController.dispose();
+    _ageController.dispose();
+    super.dispose();
   }
 }

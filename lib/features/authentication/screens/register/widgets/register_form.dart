@@ -40,7 +40,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   Future<void> fetchInstitutes() async {
     final response = await http.get(
-      Uri.parse('https://e-learn.godesqsites.com/api/institutes'),
+      Uri.parse('https://my-cdm.godesqsites.com/api/institutes'),
       headers: {
         'Accept': 'application/json',
       },
@@ -57,7 +57,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   Future<void> fetchCourses() async {
     final response = await http.get(
-      Uri.parse('https://e-learn.godesqsites.com/api/courses'),
+      Uri.parse('https://my-cdm.godesqsites.com/api/courses'),
       headers: {
         'Accept': 'application/json',
       },

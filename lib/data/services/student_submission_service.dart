@@ -6,7 +6,7 @@ import 'package:mobile/data/models/student_submission_model.dart';
 import 'dart:convert';
 
 class StudentSubmissionService {
-  final String _baseUrl = 'https://e-learn.godesqsites.com/api';
+  final String _baseUrl = 'https://my-cdm.godesqsites.com/api';
   final SessionController sessionController = Get.put(SessionController());
   final GetStorage storage = GetStorage();
 

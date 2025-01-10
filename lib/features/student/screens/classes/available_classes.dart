@@ -28,7 +28,7 @@ class _AvailableClassesScreenState extends State<AvailableClassesScreen> {
       // Replace with your API endpoint
       final response = await http.get(
           Uri.parse(
-              'https://e-learn.godesqsites.com/api/classes/student-available-classes'),
+              'https://my-cdm.godesqsites.com/api/classes/student-available-classes'),
           headers: {
             "Accept": "application/json",
             "Authorization": "Bearer ${sessionController.token.value}"
@@ -62,7 +62,7 @@ class _AvailableClassesScreenState extends State<AvailableClassesScreen> {
     try {
       // Replace with your API endpoint
       final response = await http.post(
-        Uri.parse('https://e-learn.godesqsites.com/api/classes/join'),
+        Uri.parse('https://my-cdm.godesqsites.com/api/classes/join'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': "Bearer ${sessionController.token.value}"

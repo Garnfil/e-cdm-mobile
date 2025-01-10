@@ -38,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const Divider(height: 15, thickness: 2),
             const SizedBox(height: 10),
             // buildAccountOptionRow(context, "Change password"),
-            buildAccountOptionRow(context, "Privacy and security"),
+            // buildAccountOptionRow(context, "Privacy and security"),
             const SizedBox(height: 40),
             // buildSectionHeader("Notifications", Icons.volume_up_outlined),
             // const Divider(height: 15, thickness: 2),
